@@ -102,7 +102,7 @@ class DenseCapsule(nn.Module):
 
 
 # TSception 模型  
-class TSception(nn.Module):  
+class MOdel(nn.Module):  
     def conv_block(self, in_chan, out_chan, kernel, step, pool):  
         return nn.Sequential(  
             nn.Conv2d(in_chan, out_chan, kernel_size=kernel, stride=step, padding=0),  
@@ -116,9 +116,9 @@ class TSception(nn.Module):
         self.pool = 8  
 
         # 时间特征提取模块  
-        self.Tception1 = self.conv_block(1, num_T, (1, int(self.inception_window[0] * sampling_rate)), 1, self.pool)  
-        self.Tception2 = self.conv_block(1, num_T, (1, int(self.inception_window[1] * sampling_rate)), 1, self.pool)  
-        self.Tception3 = self.conv_block(1, num_T, (1, int(self.inception_window[2] * sampling_rate)), 1, self.pool)  
+        self.TBlock1 = self.conv_block(1, num_T, (1, int(self.inception_window[0] * sampling_rate)), 1, self.pool)  
+        self.TBlock2 = self.conv_block(1, num_T, (1, int(self.inception_window[1] * sampling_rate)), 1, self.pool)  
+        self.TBlock3 = self.conv_block(1, num_T, (1, int(self.inception_window[2] * sampling_rate)), 1, self.pool)  
 
         # 空间特征提取模块  
         self.Sception1 = self.conv_block(1, num_S, (int(input_size[1]), 1), 1, int(self.pool * 0.25))  
@@ -150,11 +150,11 @@ class TSception(nn.Module):
         print("x", x.shape)  
 
         # --- 时间特征提取 ---  
-        t1 = self.Tception1(x)  
+        t1 = self.TBlock1(x)  
         print("t1", t1.shape)
-        t2 = self.Tception2(x)  
+        t2 = self.TBlock2(x)  
         print("t2", t2.shape)
-        t3 = self.Tception3(x)  
+        t3 = self.TBlock3(x)  
         print("t3", t3.shape)
         time_features = torch.cat((t1, t2, t3), dim=-1)  
         time_features = self.BN_t(time_features)  
